@@ -27,7 +27,7 @@ def infer(input_image, threshold):
     return gray, binary
 
 
-
+# Gradio界面
 with gr.Blocks() as gradio:
     gr.Markdown("## 图片灰度化与二值化演示")
     with gr.Row():
