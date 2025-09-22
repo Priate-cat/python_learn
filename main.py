@@ -7,23 +7,28 @@ template_images = {
     "OpenCV": "template/opencv_logo.png"
 }
 
-def process_image(image, threshold=128):
+def process_image(image, threshold=128, is_adaptive=False):
     # 如果输入是None，返回None
     if image is None:
         return None, None
     # 转为灰度
     gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
-    # 自适应阈值二值化
-    binary = cv2.adaptiveThreshold(
-        gray, 255, cv2.ADAPTIVE_THRESH_GAUSSIAN_C, 
-        cv2.THRESH_BINARY, 11, 2
-    )
-    return gray, binary
+    if is_adaptive:
+        # 使用自适应二值化
+        binary = cv2.adaptiveThreshold(
+            gray, 255, cv2.ADAPTIVE_THRESH_GAUSSIAN_C,
+            cv2.THRESH_BINARY, 11, 2
+        )
+        return gray, binary
+    else:
+        # 固定阈值二值化，使用传入的threshold参数
+        _, binary = cv2.threshold(gray, threshold, 255, cv2.THRESH_BINARY)
+        return gray, binary
 
-def infer(input_image, threshold):
+def infer(input_image, threshold, threshold_adaptive):
     if input_image is None:
         return None, None
-    gray, binary = process_image(input_image, threshold)
+    gray, binary = process_image(input_image, threshold, threshold_adaptive)
     return gray, binary
 
 
@@ -42,6 +47,7 @@ with gr.Blocks() as gradio:
                 lena = gr.Image(value=lena_img, label="Lena", interactive=False, show_label=True, elem_id="lena_template", height=100)
                 opencv = gr.Image(value=opencv_img, label="OpenCV", interactive=False, show_label=True, elem_id="opencv_template", height=100)
             threshold_slider = gr.Slider(0, 255, value=128, label="二值化阈值")
+            threshold_adaptive = gr.Checkbox(label="使用自适应二值化", value=False)
             btn = gr.Button("处理")
         with gr.Column():
             gray_output = gr.Image(label="灰度图")
@@ -57,7 +63,7 @@ with gr.Blocks() as gradio:
 
     btn.click(
         fn=infer,
-        inputs=[image_input, threshold_slider],
+        inputs=[image_input, threshold_slider, threshold_adaptive],
         outputs=[gray_output, binary_output]
     )
 
