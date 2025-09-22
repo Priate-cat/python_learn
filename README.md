@@ -9,8 +9,8 @@
 
 ### 1. 克隆项目
 ```bash
-git clone <your-repo-url>
-cd git_test
+git clone https://github.com/Priate-cat/python_learn.git
+cd python_learn
 ```
 
 ### 2. 安装依赖
@@ -47,5 +47,5 @@ template/              # 模板图片目录
 
 ## 说明
 - 需提前准备好 template 目录下的模板图片。
-- 推荐使用 Python 3.8 及以上版本。
+- 推荐使用 Python 3.12 及以上版本。
 - 如遇依赖问题，优先使用 uv sync。
